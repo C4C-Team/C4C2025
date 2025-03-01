@@ -98,3 +98,14 @@ This template comes with [Tailwind CSS](https://tailwindcss.com/) already config
 ---
 
 Built with ❤️ using React Router.
+
+
+## Folder Explanation
+
+- assets: folder for images or anything we use
+- componets: folder for reusable react parts
+- pages: the main pages, layouts and things we might need
+- routes: folder with files that define what will be seen at that route
+- app.css: styling file for the whole app?
+- root.tsx: the file for setup that calls everything else
+- routes.ts: file that calls all of the routes and defines where and what they are and the first - one is landing and then the rest are ones that can be called
