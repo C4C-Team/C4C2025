@@ -1,9 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 import path from "path";
+import cors from "cors";
 
 import { connectDB } from "./config/db.js";
-
 import productRoutes from "./routes/product.route.js";
 
 dotenv.config();
@@ -11,20 +11,28 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const __dirname = path.resolve();
+// Define dirname to point to current directory
+const __dirname = process.cwd();
 
-app.use(express.json()); // allows us to accept JSON data in the req.body
+app.use(express.json());
+
+app.use(cors({
+    origin: "https://c4c2025.onrender.com",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type"]
+}));
 
 app.use("/api/products", productRoutes);
 
 if (process.env.NODE_ENV === "production") {
-	app.use(express.static(path.join(__dirname, "/frontend/dist")));
-	app.get("*", (req, res) => {
-		res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-	});
+    // Updated paths to stay in backend directory
+    app.use(express.static(path.join(__dirname, "build/server")));
+    app.get("*", (req, res) => {
+        res.sendFile(path.resolve(__dirname, "build", "server", "index.js"));
+    });
 }
 
 app.listen(PORT, () => {
-	connectDB();
-	console.log("Server started at http://localhost:" + PORT);
+    connectDB();
+    console.log("Server started at http://localhost:" + PORT);
 });
