@@ -52,7 +52,7 @@ export function Submission() {
     setSuccessMessage(null);
 
     try {
-      const response = await axios.post("https://c4c2025.onrender.com/api/products", formData);
+      const response = await axios.post("https://c4c2025-back.onrender.com/api/products", formData);
       setSuccessMessage("Product successfully submitted!");
       setFormData({
         lat: "",
