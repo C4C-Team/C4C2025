@@ -2,15 +2,9 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
 	{
-		/*location: {
-			type: {
-			lat: Number,
-			lng: Number,
-			},
-			required: true,
-		},*/
-		image: {
-			type: String,
+		imageId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "uploads.files", // Reference to GridFS files
 			required: true,
 		},
 		severity: {
