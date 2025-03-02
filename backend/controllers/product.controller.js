@@ -23,11 +23,28 @@ const storage = new GridFsStorage({
     }),
 });
 
-
-export const upload = multer({ storage });
+export const upload = multer({ 
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
 
 export const uploadImage = (req, res) => {
-	res.json({ fileId: req.file.id });
+    try {
+        if (!req.file) {
+            return res.status(400).json({ 
+                success: false, 
+                message: "No file uploaded or file too large" 
+            });
+        }
+        res.json({ success: true, fileId: req.file.id });
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            message: error.message 
+        });
+    }
 };
 
 export const getProducts = async (req, res) => {
