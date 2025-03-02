@@ -15,19 +15,14 @@ const __dirname = process.cwd();
 
 app.use(express.json());
 
-// CORS middleware
+// CORS middleware - place this BEFORE your routes
 app.use((req, res, next) => {
-    const allowedOrigins = ["https://c4c2025.onrender.com", "http://localhost:5173"];
-    const origin = req.headers.origin;
-    
-    if (allowedOrigins.includes(origin)) {
-        res.header("Access-Control-Allow-Origin", origin);
-    }
-    
+    // Set the specific origin instead of using an array
+    res.header("Access-Control-Allow-Origin", "https://c4c2025.onrender.com");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
     res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
     
-    // Handle preflight requests
+    // Important: Handle OPTIONS preflight requests
     if (req.method === 'OPTIONS') {
         return res.status(200).end();
     }

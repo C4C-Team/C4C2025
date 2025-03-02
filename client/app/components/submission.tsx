@@ -47,6 +47,7 @@ export function Submission() {
         {
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json'
           }
         }
       );
