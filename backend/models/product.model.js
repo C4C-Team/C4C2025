@@ -2,10 +2,13 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
 	{
-		/*address: {
-			type: String,
+		location: {
+			type: {
+			lat: Number,
+			lng: Number,
+			},
 			required: true,
-		},*/
+		},
 		image: {
 			type: String,
 			required: true,
