@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import "../styles/navbar.css";
 
+//console.log(__filename)
 export function Navbar() {
   return (
     <nav className="navbar">
@@ -15,6 +16,12 @@ export function Navbar() {
         <li>
           <Link to="/about">
             About
+          </Link>
+        </li>
+
+        <li>
+          <Link to="/submission">
+          Submit a Form
           </Link>
         </li>
 
