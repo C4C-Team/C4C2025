@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm install && npm run build --prefix client && cd .. && npm install --prefix backend",
+    "build": "npm install && npm run build --prefix client && npm install --prefix backend",
     "start": "cross-env NODE_ENV=production node backend/server.js"
   },
   "type": "module",
