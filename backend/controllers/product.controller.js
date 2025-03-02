@@ -1,6 +1,35 @@
 import mongoose from "mongoose";
-//import { fetchLocationData } from '../services/googleApi.js';
 import Product from "../models/product.model.js";
+import Grid from "gridfs-stream";
+import multer from "multer";
+import { GridFsStorage } from "multer-gridfs-storage";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const conn = mongoose.createConnection(process.env.MONGO_URI, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+});
+
+let gfs;
+conn.once("open", () => {
+	gfs = Grid(conn.db, mongoose.mongo);
+	gfs.collection("uploads");
+});
+
+const storage = new GridFsStorage({
+	url: process.env.MONGO_URI,
+	file: (req, file) => {
+		return { filename: file.originalname, bucketName: "uploads" };
+	},
+});
+
+const upload = multer({ storage });
+
+export const uploadImage = (req, res) => {
+	res.json({ fileId: req.file.id });
+};
 
 export const getProducts = async (req, res) => {
 	try {
@@ -12,21 +41,32 @@ export const getProducts = async (req, res) => {
 	}
 };
 
-export const createProduct = async (req, res) => {
-	const product = req.body; // user will send this data
-
-	if (!product.severity || !product.description || !product.image) {
-		return res.status(400).json({ success: false, message: "Please provide all fields" });
-	}
-
-	const newProduct = new Product(product);
-
+export const getImage = async (req, res) => {
 	try {
-		await newProduct.save();
-		res.status(201).json({ success: true, data: newProduct });
+		gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) }, (err, file) => {
+			if (!file || file.length === 0) {
+				return res.status(404).json({ message: "No file found" });
+			}
+			const readstream = gfs.createReadStream(file.filename);
+			readstream.pipe(res);
+		});
 	} catch (error) {
-		console.error("Error in Create product:", error.message);
-		res.status(500).json({ success: false, message: "Server Error" });
+		res.status(500).json({ message: error.message });
+	}
+};
+
+export const createProduct = async (req, res) => {
+	try {
+		const { severity, description } = req.body;
+		const product = new Product({
+			imageId: req.file.id,
+			severity,
+			description,
+		});
+		await product.save();
+		res.status(201).json(product);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
 	}
 };
 
