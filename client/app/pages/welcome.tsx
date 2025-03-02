@@ -2,25 +2,21 @@ import logoDark from "../assets/logo-dark.svg";
 import logoLight from "../assets/logo-light.svg";
 import { Navbar } from "~/components/navbar";
 import { Footer } from '~/components/footer';
+import { MyComponent } from "~/components/map";
 
 export function Welcome() {
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Navigation Bar */}
-      <header className=" text-white p-4">
-          <Navbar />
-      </header>
-
-      {/* Main Content */}
+    <div className="flex flex-col">
       <main className="flex-1 flex flex-col items-center justify-center p-4">
         <h1 className="text-4xl font-bold mb-4">Welcome to Code 4 Change</h1>
         <p className="text-lg text-center">
           This is for Code 4 Change. Explore our resources and learn how you can make a difference.
         </p>
+      <MyComponent />
+
+
       </main>
 
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

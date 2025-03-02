@@ -4,10 +4,8 @@ import { Footer } from '~/components/footer';
 export function About() {
   return (
     <div>
-        <Navbar />
         <h1>About Page</h1>
         <p>This is the about page!</p>
-    <Footer />
     </div>
   );
 };
