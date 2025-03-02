@@ -17,7 +17,7 @@ const __dirname = process.cwd();
 app.use(express.json());
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://c4c2025.onrender.com",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type"]
 }));
