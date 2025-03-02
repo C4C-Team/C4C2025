@@ -92,9 +92,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
 
   // Fetch existing pins from MongoDB
   useEffect(() => {
-
     axios.get('https://c4c2025-back.onrender.com/api/products', {
-      withCredentials: true,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -102,7 +100,6 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
     .then(response => {
       if (response.data && Array.isArray(response.data.data)) {
         const data = response.data.data;
-        
         // Separate pins and events from the response
         const fetchedPins = data
           .filter((product: any) => product.location)
@@ -111,7 +108,6 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
             lng: product.location.lng,
             title: product.description || `Pin ${product._id}`
           }));
-
         const fetchedEvents = data
           .map((product: any) => ({
             id: product._id,
@@ -119,14 +115,12 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
             description: product.description,
             severity: product.severity
           }));
-
         setPins(fetchedPins);
         setEvents(fetchedEvents);
       }
     })
     .catch(error => {
       console.error("Error fetching pins:", error);
-      // Add better error handling here
     });
   }, []);
 
@@ -134,7 +128,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
     e.preventDefault();
     setShowEvents(!showEvents);
   }
-  
+
   if (!isLoaded || !currentLocation) {
     return <div>Loading map...</div>;
   }
@@ -142,49 +136,45 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
   return (
     <div>
       <GoogleMap
-          mapContainerStyle={{ width: '100vw', height: '100vh' }}
-          center={currentLocation}
-          zoom={10}
-          onClick={(e) => {
-            if (e.latLng) {
-              console.log(e.latLng.lat(), e.latLng.lng());
-            }
-          }}
-          >
-          {/* Render the current location pin */}
-          <Marker position={currentLocation} />
+        mapContainerStyle={{ width: '100vw', height: '100vh' }}
+        center={currentLocation}
+        zoom={10}
+        onClick={(e) => {
+          if (e.latLng) {
+            console.log(e.latLng.lat(), e.latLng.lng());
+          }
+        }}
+      >
+        {/* Render the current location pin */}
+        <Marker position={currentLocation} />
 
-          {/* Render all stored pins */}
-          {pins.map((pin, index) => (
-            <Marker key={index} position={{ lat: pin.lat, lng: pin.lng }} />
+        {/* Render all stored pins */}
+        {pins.map((pin, index) => (
+          <Marker key={index} position={{ lat: pin.lat, lng: pin.lng }} />
         ))}
       </GoogleMap>
 
-  <div style={{
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%'
-    }}>
-      <div onMouseEnter={() => setmenuSelect(false)}
-          onMouseLeave={() => setmenuSelect(true)}
-          style={{color: menuSelect ? "blue" : "white", width: '50%', textAlign: 'center', padding: 15 }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        width: '100%'
+      }}
+        onMouseEnter={() => setmenuSelect(false)}
+        onMouseLeave={() => setmenuSelect(true)}
+        style={{ color: menuSelect ? "blue" : "white", width: '50%', textAlign: 'center', padding: 15 }}>
         <button onClick={handleClick}>
           {showEvents ? 'Hide Events' : 'Show Events'}
         </button>
       </div>
 
       {showEvents && (
-        <div className="event-list" style={{width: '50%', margin: '0 auto'}}>
+        <div className="event-list" style={{ width: '50%', margin: '0 auto' }}>
           {events.map((event) => (
             <EventCard key={event.id} {...event} />
           ))}
         </div>
       )}
     </div>
-  </div>
-
-
-
   );
 }

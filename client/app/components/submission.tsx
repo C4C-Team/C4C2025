@@ -1,14 +1,6 @@
 import React, { useState, type FormEvent } from 'react';
 import axios from "axios";
 export function Submission() {
-//   const [location, setLocation] = useState<{ lat: number; lng: number }>([0][0]);
-//   const [image, setImage] = useState('');
-//   const [severity, setSeverity] = useState('');
-//   const [description, setDescription] = useState('');
-
-
-//export const ProductForm = () => {
-  // Form state
   const [formData, setFormData] = useState({
     lat: "",
     lng: "",
@@ -21,7 +13,6 @@ export function Submission() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Handle input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -29,22 +20,20 @@ export function Submission() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle image capture
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]; // Get the first selected file
+    const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
         setFormData((prev) => ({
           ...prev,
-          image: reader.result as string, // Store base64 image
+          image: reader.result as string,
         }));
       };
-      reader.readAsDataURL(file); // Convert image to base64
+      reader.readAsDataURL(file);
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -52,7 +41,15 @@ export function Submission() {
     setSuccessMessage(null);
 
     try {
-      const response = await axios.post("https://c4c2025-back.onrender.com/api/products", formData);
+      const response = await axios.post(
+        "https://c4c2025-back.onrender.com/api/products", 
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
       setSuccessMessage("Product successfully submitted!");
       setFormData({
         lat: "",
@@ -62,7 +59,7 @@ export function Submission() {
         description: "",
       });
     } catch (err) {
-      setError("Error submitting product.");
+      setError("Error submitting product: " + (err as Error).message);
     } finally {
       setIsSubmitting(false);
     }
