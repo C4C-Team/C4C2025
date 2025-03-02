@@ -11,8 +11,8 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Change dirname to point to root directory
-const __dirname = path.resolve(path.join(process.cwd(), '..'));
+// Define dirname to point to current directory
+const __dirname = process.cwd();
 
 app.use(express.json());
 
@@ -25,10 +25,10 @@ app.use(cors({
 app.use("/api/products", productRoutes);
 
 if (process.env.NODE_ENV === "production") {
-    // Updated paths to start from root directory
-    app.use(express.static(path.join(__dirname, "client/build/server")));
+    // Updated paths to stay in backend directory
+    app.use(express.static(path.join(__dirname, "build/server")));
     app.get("*", (req, res) => {
-        res.sendFile(path.resolve(__dirname, "client", "build", "server", "index.js"));
+        res.sendFile(path.resolve(__dirname, "build", "server", "index.js"));
     });
 }
 
