@@ -7,25 +7,24 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const conn = mongoose.createConnection(process.env.MONGO_URI, {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-});
-
 let gfs;
-conn.once("open", () => {
-	gfs = Grid(conn.db, mongoose.mongo);
-	gfs.collection("uploads");
-});
+mongoose.connection.once("open", () => {
+	// Use the native MongoDB GridFSBucket API
+	gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+	  bucketName: "uploads",
+	});
+  });
 
 const storage = new GridFsStorage({
-	url: process.env.MONGO_URI,
-	file: (req, file) => {
-		return { filename: file.originalname, bucketName: "uploads" };
-	},
+    url: process.env.MONGO_URI,
+    file: (req, file) => ({
+        filename: file.originalname,
+        bucketName: "uploads",
+    }),
 });
 
-const upload = multer({ storage });
+
+export const upload = multer({ storage });
 
 export const uploadImage = (req, res) => {
 	res.json({ fileId: req.file.id });
@@ -43,17 +42,18 @@ export const getProducts = async (req, res) => {
 
 export const getImage = async (req, res) => {
 	try {
-		gfs.files.findOne({ _id: new mongoose.Types.ObjectId(req.params.id) }, (err, file) => {
-			if (!file || file.length === 0) {
-				return res.status(404).json({ message: "No file found" });
-			}
-			const readstream = gfs.createReadStream(file.filename);
-			readstream.pipe(res);
-		});
+	  const fileId = new mongoose.Types.ObjectId(req.params.id);
+	  const downloadStream = gfs.openDownloadStream(fileId);
+  
+	  downloadStream.on("error", () => {
+		return res.status(404).json({ message: "No file found" });
+	  });
+  
+	  downloadStream.pipe(res);
 	} catch (error) {
-		res.status(500).json({ message: error.message });
+	  res.status(500).json({ message: error.message });
 	}
-};
+  };
 
 export const createProduct = async (req, res) => {
 	try {
