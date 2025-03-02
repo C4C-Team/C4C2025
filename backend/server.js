@@ -22,7 +22,7 @@ app.use(cors({
 	allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.use("/api/products", require("/routes/product.route.js"));
+app.use("/api/products","/routes/product.route.js");
 
 if (process.env.NODE_ENV === "production") {
     // Updated paths to stay in backend directory
