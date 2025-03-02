@@ -29,6 +29,9 @@ app.use((req, res, next) => {
     next();
 });
 
+app.options("*", cors());
+
+
 app.use("/api/products", productRoutes);
 
 if (process.env.NODE_ENV === "production") {
