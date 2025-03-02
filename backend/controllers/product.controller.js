@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+//import { fetchLocationData } from '../services/googleApi.js';
 import Product from "../models/product.model.js";
 
 export const getProducts = async (req, res) => {
