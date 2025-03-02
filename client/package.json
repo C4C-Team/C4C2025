@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "react-router build",
+    "build": "npm i && react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
@@ -13,6 +13,7 @@
     "@react-router/node": "^7.2.0",
     "@react-router/serve": "^7.2.0",
     "axios": "^1.8.1",
+    "c4c2025": "file:..",
     "isbot": "^5.1.17",
     "leaflet": "^1.9.4",
     "react": "^19.0.0",

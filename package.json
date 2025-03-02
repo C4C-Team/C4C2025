@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "npm install && npm install --prefix client && npm run build --prefix client && tsc",
-    "start": "NODE_ENV=production node backend/server.js"
+    "start": "cross-env NODE_ENV=production node backend/server.js"
   },
   "type": "module",
   "author": "",
@@ -16,5 +16,8 @@
     "express": "^4.21.2",
     "mongoose": "^8.11.0",
     "typescript": "^5.8.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
