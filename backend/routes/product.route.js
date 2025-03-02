@@ -1,8 +1,6 @@
 import express from "express";
 import { upload } from "../controllers/product.controller.js";
-import { uploadImage, createProduct, getImage } from "../controllers/product.controller.js";
-import { createProduct, deleteProduct, getProducts, updateProduct } from "../controllers/product.controller.js";
-
+import { uploadImage, createProduct, getImage, deleteProduct, getProducts, updateProduct } from "../controllers/product.controller.js";
 const router = express.Router();
 
 router.get("/", getProducts);
