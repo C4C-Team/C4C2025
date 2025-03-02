@@ -92,6 +92,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
 
   // Fetch existing pins from MongoDB
   useEffect(() => {
+
     axios.get('https://c4c2025-back.onrender.com/api/products')
       .then(response => {
         if (response.data && Array.isArray(response.data.data)) {

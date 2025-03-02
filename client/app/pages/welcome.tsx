@@ -3,6 +3,7 @@ import logoLight from "../assets/logo-light.svg";
 import { Navbar } from "~/components/navbar";
 import { Footer } from '~/components/footer';
 import { MyComponent } from "~/components/map";
+import { Submission } from "~/components/submission"
 
 export function Welcome() {
   return (
@@ -12,7 +13,10 @@ export function Welcome() {
         <p className="text-lg text-center">
           This is for Code 4 Change. Explore our resources and learn how you can make a difference.
         </p>
+      
       <MyComponent />
+      <Submission />
+      
 
 
       </main>
