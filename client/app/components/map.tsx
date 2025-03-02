@@ -93,39 +93,41 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
   // Fetch existing pins from MongoDB
   useEffect(() => {
 
-    axios.get('https://c4c2025-back.onrender.com/api/products')
-      .then(response => {
-        if (response.data && Array.isArray(response.data.data)) {
-          const data = response.data.data;
-          
-         // Separate pins and events from the response
+    axios.get('https://c4c2025-back.onrender.com/api/products', {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(response => {
+      if (response.data && Array.isArray(response.data.data)) {
+        const data = response.data.data;
+        
+        // Separate pins and events from the response
         const fetchedPins = data
-        .filter((product: any) => product.location)
-        .map((product: any) => ({
-          lat: product.location.lat,
-          lng: product.location.lng,
-          title: product.description || `Pin ${product._id}`
-        }));
+          .filter((product: any) => product.location)
+          .map((product: any) => ({
+            lat: product.location.lat,
+            lng: product.location.lng,
+            title: product.description || `Pin ${product._id}`
+          }));
 
-       const fetchedEvents = data
-         .map((product: any) => ({
-           id: product._id,
-           image: product.image,
-           description: product.description,
-           severity: product.severity
-         }));
-
-
-        console.log(fetchedPins);
-        console.log(fetchedEvents);
+        const fetchedEvents = data
+          .map((product: any) => ({
+            id: product._id,
+            image: product.image,
+            description: product.description,
+            severity: product.severity
+          }));
 
         setPins(fetchedPins);
         setEvents(fetchedEvents);
-
-        return;
-        }
+      }
     })
-      .catch(error => console.error("Error fetching pins:", error));
+    .catch(error => {
+      console.error("Error fetching pins:", error);
+      // Add better error handling here
+    });
   }, []);
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
