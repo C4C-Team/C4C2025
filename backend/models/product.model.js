@@ -1,33 +1,22 @@
 import mongoose from "mongoose";
 
-const productSchema = new mongoose.Schema(
-	{
-		location: {
-			type: {
-				lat: Number,
-				lng: Number,
-			},
-			required: true, // Change to `false` if API might fail
-		},
-		imageId: {
-			type: mongoose.Schema.Types.ObjectId,
-			ref: "uploads.files", // Reference to GridFS files
-			required: true,
-		},
-		severity: {
-			type: String,
-			required: true,
-		},
-		description: {
-			type: String,
-			required: true,
-		},
-	},
-	{
-		timestamps: true, // createdAt, updatedAt
-	}
-);
+const productSchema = new mongoose.Schema({
+    severity: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    image: {
+        type: String,
+        required: true
+    },
+    created_at: {
+        type: Date,
+        default: Date.now
+    }
+});
 
-const Product = mongoose.model("Product", productSchema);
-
-export default Product;
+export default mongoose.model("Product", productSchema);

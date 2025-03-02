@@ -73,18 +73,42 @@ export const getImage = async (req, res) => {
   };
 
 export const createProduct = async (req, res) => {
-	try {
-		const { severity, description } = req.body;
-		const product = new Product({
-			imageId: req.file.id,
-			severity,
-			description,
-		});
-		await product.save();
-		res.status(201).json(product);
-	} catch (error) {
-		res.status(500).json({ message: error.message });
-	}
+    try {
+        const { severity, description, image } = req.body;
+        
+        // Validate required fields
+        if (!severity || !description || !image) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing required fields: severity, description, and image are required"
+            });
+        }
+
+        // Create new product
+        const product = new Product({
+            severity,
+            description,
+            image, // Store the image directly if it's base64
+            created_at: new Date()
+        });
+
+        // Save to database
+        const savedProduct = await product.save();
+        
+        // Send success response
+        res.status(201).json({
+            success: true,
+            data: savedProduct
+        });
+
+    } catch (error) {
+        console.error("Error creating product:", error);
+        res.status(500).json({ 
+            success: false, 
+            message: "Error creating product",
+            error: error.message 
+        });
+    }
 };
 
 export const updateProduct = async (req, res) => {

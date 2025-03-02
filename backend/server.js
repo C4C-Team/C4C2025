@@ -11,8 +11,26 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Increase payload size limit - add this BEFORE other middleware
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
+app.use(express.json({
+    limit: '50mb',
+    verify: (req, res, buf) => {
+        try {
+            JSON.parse(buf);
+        } catch(e) {
+            res.status(400).json({ 
+                success: false, 
+                message: 'Invalid JSON payload' 
+            });
+            throw Error('Invalid JSON');
+        }
+    }
+}));
+
+app.use(express.urlencoded({ 
+    limit: '50mb', 
+    extended: true,
+    parameterLimit: 100000
+}));
 
 // Define dirname to point to current directory
 const __dirname = process.cwd();
@@ -33,8 +51,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
 app.use("/api/products", productRoutes);
 
 if (process.env.NODE_ENV === "production") {
@@ -44,6 +60,16 @@ if (process.env.NODE_ENV === "production") {
         res.sendFile(path.resolve(__dirname, "build", "server", "index.js"));
     });
 }
+
+// Add error handling middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({
+        success: false,
+        message: 'Internal Server Error',
+        error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
+});
 
 app.listen(PORT, () => {
     connectDB();
