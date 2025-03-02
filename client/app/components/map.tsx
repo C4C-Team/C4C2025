@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, type ReactHTMLElement } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import axios from 'axios';
 
@@ -8,6 +8,9 @@ import axios from 'axios';
 
 // combning the data, i need you to display this drop down menu list thing, 
 // after display them on the map, 
+
+
+
 const events = [
     {
       id: 1,
@@ -58,6 +61,11 @@ export function MyComponent() {
   const [pins, setPins] = useState<any[]>([]);
 
   const [testPins, setTest] = useState<any[]>([]);
+  const [showEvents, setShowEvents] = useState(false);
+
+  // mouse hover event
+  const [menuSelect, setmenuSelect] = useState(true);
+
   interface Pin {
     lat: number;
     lng: number;
@@ -114,6 +122,11 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
       .then(response => setPins(response.data))
       .catch(error => console.error("Error fetching pins:", error));
   }, []);
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setShowEvents(!showEvents);
+  }
   
   if (!isLoaded || !currentLocation) {
     return <div>Loading map...</div>;
@@ -146,12 +159,29 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
 
 
 
-    <div className="event-list">
-    {events.map((event) => (
-    <EventCard key={event.id} {...event} />
-    ))}
+  <div style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%'
+    }}>
+      <div onMouseEnter={() => setmenuSelect(false)}
+          onMouseLeave={() => setmenuSelect(true)}
+          style={{color: menuSelect ? "blue" : "white", width: '50%', textAlign: 'center', padding: 15 }}>
+        <button onClick={handleClick}>
+          {showEvents ? 'Hide Events' : 'Show Events'}
+        </button>
+      </div>
+
+      {showEvents && (
+        <div className="event-list" style={{width: '50%', margin: '0 auto'}}>
+          {events.map((event) => (
+            <EventCard key={event.id} {...event} />
+          ))}
+        </div>
+      )}
     </div>
-    </div>
+  </div>
 
 
 
