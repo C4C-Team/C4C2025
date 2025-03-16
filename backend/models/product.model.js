@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema({
+    location: {
+        type: {
+            lat: Number,
+            lng: Number,
+        },
+        required: true,
+    },
     severity: {
         type: String,
         required: true
