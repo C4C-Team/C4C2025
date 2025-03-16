@@ -14,7 +14,7 @@ import axios from 'axios';
     severity: string;
   }
   
-  const EventCard = ({ image, description, severity }: EventCardProps) => (
+  const TrashCard = ({ image, description, severity }: EventCardProps) => (
     <div className="event-card" style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
       <img src={image} alt={description} style={{ width: '10vw', height: '150px', objectFit: 'cover' }} />
       <div style={{ marginTop: '0.5rem' }}>
@@ -24,7 +24,8 @@ import axios from 'axios';
     </div>
   );
 
-export function MyComponent() {
+// This is the map component which is responsible to displaying the map and the pins
+export function Map() {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY
@@ -35,7 +36,7 @@ export function MyComponent() {
   const [events, setEvents] = useState<{ id: number; image: string; description: string; severity: string }[]>([]);
 
   const [testPins, setTest] = useState<any[]>([]);
-  const [showEvents, setShowEvents] = useState(false);
+  const [showCards, setShowCards] = useState(false);
 
   // mouse hover event
   const [menuSelect, setmenuSelect] = useState(true);
@@ -46,7 +47,7 @@ export function MyComponent() {
     title: string;
   }
 
-  // Get current location using the Geolocation API
+  // Get current location using the Geolocation API - Location thingss
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -54,13 +55,16 @@ export function MyComponent() {
             const lat = position.coords.latitude;
             const lng = position.coords.longitude;    
 
-
           setCurrentLocation({
             lat: lat,
             lng: lng,
           });
+
+          // Testing purposes
           const nearby = generateNearbyPins(lat, lng, 5);
           setTest(nearby);
+          // end of testing
+
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -89,6 +93,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
     }
     return pins;
 };
+// end of testing
 
   // Fetch existing pins from MongoDB
   useEffect(() => {
@@ -108,15 +113,19 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
             lng: product.location.lng,
             title: product.description || `Pin ${product._id}`
           }));
-        const fetchedEvents = data
+
+        const fetchedCards = data
           .map((product: any) => ({
             id: product._id,
             image: product.image,
             description: product.description,
             severity: product.severity
           }));
+
         setPins(fetchedPins);
-        setEvents(fetchedEvents);
+        setEvents(fetchedCards);
+
+        
       }
     })
     .catch(error => {
@@ -124,14 +133,19 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
     });
   }, []);
 
+
+  // Mouse hover event listener for displaying the cards
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setShowEvents(!showEvents);
+    setShowCards(!showCards);
   }
 
+
+  // JUST MAP LOADING
   if (!isLoaded || !currentLocation) {
     return <div>Loading map...</div>;
   }
+
 
   return (
     <div>
@@ -154,6 +168,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
         ))}
       </GoogleMap>
 
+      {/* Render the trash post cards */}
       <div style={{
         display: 'flex',
         flexDirection: 'column',
@@ -162,16 +177,16 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
       }}
         onMouseEnter={() => setmenuSelect(false)}
         onMouseLeave={() => setmenuSelect(true)}
-        style={{ color: menuSelect ? "blue" : "white", width: '50%', textAlign: 'center', padding: 15 }}>
+      >
         <button onClick={handleClick}>
-          {showEvents ? 'Hide Events' : 'Show Events'}
+          {showCards ? 'Hide Trash' : 'Show Trash'}
         </button>
       </div>
 
-      {showEvents && (
+      {showCards && (
         <div className="event-list" style={{ width: '50%', margin: '0 auto' }}>
           {events.map((event) => (
-            <EventCard key={event.id} {...event} />
+            <TrashCard key={event.id} {...event} />
           ))}
         </div>
       )}
