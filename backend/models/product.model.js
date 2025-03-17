@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
             lat: Number,
             lng: Number,
         },
-        required: false,
+        required: true,
     },
     severity: {
         type: String,
