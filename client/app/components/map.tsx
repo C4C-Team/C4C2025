@@ -1,10 +1,7 @@
 import React, { useEffect, useState, type ReactHTMLElement } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
+import { useLocation } from '~/context/locationContext';
 import axios from 'axios';
-
-
-// from here; this is the fake db, the events that we would get
-// from the db. We we will also getting the longtitude and latitude
 
   // A component to render each event
   interface EventCardProps {
@@ -33,7 +30,7 @@ export function Map() {
 
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [pins, setPins] = useState<{ lat: number; lng: number; title: string }[]>([]);
-  const [events, setEvents] = useState<{ id: number; image: string; description: string; severity: string }[]>([]);
+  const [cards, setCards] = useState<{ id: number; image: string; description: string; severity: string }[]>([]);
 
   const [testPins, setTest] = useState<any[]>([]);
   const [showCards, setShowCards] = useState(false);
@@ -47,34 +44,16 @@ export function Map() {
     title: string;
   }
 
-  // Get current location using the Geolocation API - Location thingss
+  // Get current location from context and updating our currentLocation state
+  const { lat, lng } = useLocation();
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;    
-
-          setCurrentLocation({
-            lat: lat,
-            lng: lng,
-          });
-
-          // Testing purposes
-          const nearby = generateNearbyPins(lat, lng, 5);
-          setTest(nearby);
-          // end of testing
-
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          // Fallback location (e.g., New York City)
-          setCurrentLocation({ lat: 40.7128, lng: -74.006 });
-        }
-      );
+    if (lat && lng) {
+      setCurrentLocation({
+        lat: lat,
+        lng: lng,
+      });
     }
-  }, []);
-
+  }, [lat, lng]);
 
 
 // This is for testing
@@ -105,15 +84,16 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
     .then(response => {
       if (response.data && Array.isArray(response.data.data)) {
         const data = response.data.data;
+
         // Separate pins and events from the response
         const fetchedPins = data
           .filter((product: any) => product.location)
           .map((product: any) => ({
-            lat: product.location.lat,
-            lng: product.location.lng,
+            lat: Number(product.location.lat),
+            lng: Number(product.location.lng),
             title: product.description || `Pin ${product._id}`
           }));
-
+        
         const fetchedCards = data
           .map((product: any) => ({
             id: product._id,
@@ -123,9 +103,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
           }));
 
         setPins(fetchedPins);
-        setEvents(fetchedCards);
-
-        
+        setCards(fetchedCards);
       }
     })
     .catch(error => {
@@ -140,12 +118,10 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
     setShowCards(!showCards);
   }
 
-
   // JUST MAP LOADING
   if (!isLoaded || !currentLocation) {
     return <div>Loading map...</div>;
   }
-
 
   return (
     <div>
@@ -161,7 +137,7 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
         }}
       >
         {/* Render the current location pin */}
-        <Marker position={currentLocation} />
+        {/* <Marker position={currentLocation} /> */}
         {/* Render all stored pins */}
         {pins.map((pin, index) => (
           <Marker key={index} position={{ lat: pin.lat, lng: pin.lng }} />
@@ -185,8 +161,8 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
 
       {showCards && (
         <div className="event-list" style={{ width: '50%', margin: '0 auto' }}>
-          {events.map((event) => (
-            <TrashCard key={event.id} {...event} />
+          {cards.map((card) => (
+            <TrashCard key={card.id} {...card} />
           ))}
         </div>
       )}

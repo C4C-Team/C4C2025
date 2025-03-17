@@ -1,8 +1,8 @@
-import React, { useState, type FormEvent } from 'react';
+import React, { useState, useEffect, type FormEvent } from 'react';
+import { useLocation } from '~/context/locationContext';
 import axios from "axios";
 
 export function Submission() {
-
   const [formData, setFormData] = useState({
     lat: "",
     lng: "",
@@ -14,6 +14,7 @@ export function Submission() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { lat, lng } = useLocation();
 
   // event listener for when the form is changed
   const handleChange = (
@@ -45,11 +46,11 @@ export function Submission() {
     setError(null);
     setSuccessMessage(null);
 
-    // formtted submission data:
+    // formatted submission data:
     const submissionData = {
       location: {
-        lat: parseFloat(formData.lat),
-        lng: parseFloat(formData.lng),
+        lat: Number(lat),
+        lng: Number(lng),
       },
       image: formData.image,
       severity: formData.severity,
@@ -97,27 +98,6 @@ export function Submission() {
       {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
 
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Latitude:</label>
-          <input
-            type="number"
-            name="lat"
-            value={formData.lat}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div>
-          <label>Longitude:</label>
-          <input
-            type="number"
-            name="lng"
-            value={formData.lng}
-            onChange={handleChange}
-            required
-          />
-        </div>
 
         <div>
           <label>Image:</label>
@@ -161,7 +141,9 @@ export function Submission() {
         <button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "Submitting..." : "Submit Product"}
         </button>
+        
       </form>
+
     </div>
   );
 };
