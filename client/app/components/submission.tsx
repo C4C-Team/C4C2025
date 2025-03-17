@@ -1,6 +1,8 @@
 import React, { useState, type FormEvent } from 'react';
 import axios from "axios";
+
 export function Submission() {
+
   const [formData, setFormData] = useState({
     lat: "",
     lng: "",
@@ -13,6 +15,7 @@ export function Submission() {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  // event listener for when the form is changed
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -20,6 +23,7 @@ export function Submission() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // event listener for when the image is change
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -34,16 +38,29 @@ export function Submission() {
     }
   };
 
+  // event listener for when the form is submitted
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
     setSuccessMessage(null);
 
+    // formtted submission data:
+    const submissionData = {
+      location: {
+        lat: parseFloat(formData.lat),
+        lng: parseFloat(formData.lng),
+      },
+      image: formData.image,
+      severity: formData.severity,
+      description: formData.description,
+    };
+
+    // change the URL to an environment variable at some point lmao
     try {
       const response = await axios.post(
         "https://c4c2025-back.onrender.com/api/products", 
-        formData,
+        submissionData,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -51,6 +68,7 @@ export function Submission() {
           }
         }
       );
+
       setSuccessMessage("Product successfully submitted!");
       setFormData({
         lat: "",
@@ -59,6 +77,9 @@ export function Submission() {
         severity: "",
         description: "",
       });
+
+      console.log(response.data);
+
     } catch (err) {
       setError("Error submitting product: " + (err as Error).message);
     } finally {
@@ -66,6 +87,8 @@ export function Submission() {
     }
   };
 
+
+  // this is all the html/css part of the form
   return (
     <div>
       <h2>Product Submission Form</h2>

@@ -149,8 +149,9 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
 
   return (
     <div>
+      
       <GoogleMap
-        mapContainerStyle={{ width: '100vw', height: '100vh' }}
+        mapContainerStyle={{ width: '100vw', height: '80vh' }}
         center={currentLocation}
         zoom={10}
         onClick={(e) => {
@@ -161,7 +162,6 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
       >
         {/* Render the current location pin */}
         <Marker position={currentLocation} />
-
         {/* Render all stored pins */}
         {pins.map((pin, index) => (
           <Marker key={index} position={{ lat: pin.lat, lng: pin.lng }} />
@@ -190,6 +190,8 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
           ))}
         </div>
       )}
+
+
     </div>
   );
 }
