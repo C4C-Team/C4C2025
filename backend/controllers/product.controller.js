@@ -74,13 +74,13 @@ export const getImage = async (req, res) => {
 
 export const createProduct = async (req, res) => {
     try {
-        const { severity, description, image } = req.body;
+        const { severity, description, image, location } = req.body;
         
         // Validate required fields
-        if (!severity || !description || !image) {
+        if (!severity || !description || !image || !location) {
             return res.status(400).json({
                 success: false,
-                message: "Missing required fields: severity, description, and image are required"
+                message: "Missing required fields: severity, description, location and image are required"
             });
         }
 
@@ -89,6 +89,7 @@ export const createProduct = async (req, res) => {
             severity,
             description,
             image, // Store the image directly if it's base64
+            location,
             created_at: new Date()
         });
 
