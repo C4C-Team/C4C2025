@@ -32,6 +32,7 @@ export function Map() {
   const [pins, setPins] = useState<{ lat: number; lng: number; title: string }[]>([]);
   const [cards, setCards] = useState<{ id: number; image: string; description: string; severity: string }[]>([]);
 
+  const BE_API_URL = import.meta.env.VITE_BE_API_URL;
   const [testPins, setTest] = useState<any[]>([]);
   const [showCards, setShowCards] = useState(false);
 
@@ -74,9 +75,10 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
 };
 // end of testing
 
+
   // Fetch existing pins from MongoDB
   useEffect(() => {
-    axios.get('https://c4c2025-back.onrender.com/api/products', {
+    axios.get(BE_API_URL+ '/api/products', {
       headers: {
         'Content-Type': 'application/json'
       }

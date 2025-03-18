@@ -11,6 +11,7 @@ export function Submission() {
     description: "",
   });
 
+  const BE_API_URL = import.meta.env.VITE_BE_API_URL;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -60,7 +61,7 @@ export function Submission() {
     // change the URL to an environment variable at some point lmao
     try {
       const response = await axios.post(
-        "https://c4c2025-back.onrender.com/api/products", 
+        BE_API_URL+ '/api/products', 
         submissionData,
         {
           headers: {
