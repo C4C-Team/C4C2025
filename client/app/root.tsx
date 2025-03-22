@@ -1,5 +1,4 @@
 import { Provider } from "~/components/ui/provider"
-import { Box, Button } from "@chakra-ui/react"
 import {
   isRouteErrorResponse,
   Links,
@@ -8,10 +7,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
+import { Box, Flex } from "@chakra-ui/react";
 import type { Route } from "./+types/root";
 import "./app.css";
 import { Navbar } from "./components/navbar";
+import { Map } from "./components/map";
 import { Footer } from "./components/footer";
 import { LocationProvider } from "./context/locationContext";
 
@@ -30,30 +30,35 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-      <html lang="en">
-        <head>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <Meta />
-          <Links />
-        </head>
-        <body>
-          <Provider>
-          <header>
-            <Navbar />  
-          </header>
-          </Provider>
-
-          {children}
-          <header>
-            <Footer />
-          </header>
-
-          <ScrollRestoration />
-          <Scripts />
-        </body>
-      </html>
-  );
+    <html lang="en">
+    <head>
+      <meta charSet="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <Meta />
+      <Links />
+    </head>
+    <body>
+      <Provider>
+        <LocationProvider>
+          <Flex direction="column" minHeight="100vh" bg="grey">
+            <Box as="header">
+              <Navbar />
+              <Map />
+            </Box>
+            <Box flex="1">
+              {children}
+            </Box>
+            <Box as="footer">
+              <Footer />
+            </Box>
+          </Flex>
+        </LocationProvider>
+      </Provider>
+      <ScrollRestoration />
+      <Scripts />
+    </body>
+  </html>
+);
 }
 
 export default function App() {

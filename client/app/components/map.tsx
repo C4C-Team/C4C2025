@@ -2,16 +2,17 @@ import React, { useEffect, useState, type ReactHTMLElement } from 'react';
 import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
 import { useLocation } from '~/context/locationContext';
 import axios from 'axios';
+import { Box, Flex, VStack, Button } from '@chakra-ui/react';
 
   // A component to render each event
-  interface EventCardProps {
+  interface TrashCardProps {
     id: number;
     image: string;
     description: string;
     severity: string;
   }
   
-  const TrashCard = ({ image, description, severity }: EventCardProps) => (
+  const TrashCard = ({ image, description, severity }: TrashCardProps) => (
     <div className="event-card" style={{ border: '1px solid #ccc', padding: '1rem', marginBottom: '1rem' }}>
       <img src={image} alt={description} style={{ width: '10vw', height: '150px', objectFit: 'cover' }} />
       <div style={{ marginTop: '0.5rem' }}>
@@ -126,10 +127,10 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
   }
 
   return (
-    <div>
-      
+    <Box>
+    <Box width="50%" height="60vh" padding={20}>
       <GoogleMap
-        mapContainerStyle={{ width: '100vw', height: '80vh' }}
+        mapContainerStyle={{ width: '100%', height: '100%' }}
         center={currentLocation}
         zoom={10}
         onClick={(e) => {
@@ -138,38 +139,31 @@ const generateNearbyPins = (lat: number, lng: number, count: number): Pin[] => {
           }
         }}
       >
-        {/* Render the current location pin */}
-        {/* <Marker position={currentLocation} /> */}
-        {/* Render all stored pins */}
         {pins.map((pin, index) => (
           <Marker key={index} position={{ lat: pin.lat, lng: pin.lng }} />
         ))}
       </GoogleMap>
+    </Box>
 
-      {/* Render the trash post cards */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%'
-      }}
-        onMouseEnter={() => setmenuSelect(false)}
-        onMouseLeave={() => setmenuSelect(true)}
-      >
-        <button onClick={handleClick}>
-          {showCards ? 'Hide Trash' : 'Show Trash'}
-        </button>
-      </div>
+    <Flex
+      direction="column"
+      alignItems="center"
+      width="100%"
+      onMouseEnter={() => setmenuSelect(false)}
+      onMouseLeave={() => setmenuSelect(true)}
+    >
+      <Button onClick={handleClick}>
+        {showCards ? 'Hide Trash' : 'Show Trash'}
+      </Button>
+    </Flex>
 
-      {showCards && (
-        <div className="event-list" style={{ width: '50%', margin: '0 auto' }}>
-          {cards.map((card) => (
-            <TrashCard key={card.id} {...card} />
-          ))}
-        </div>
-      )}
-
-
-    </div>
+    {showCards && (
+      <VStack width="50%" margin="0 auto" gap={4} className="event-list">
+        {cards.map((card) => (
+          <TrashCard key={card.id} {...card} />
+        ))}
+      </VStack>
+    )}
+  </Box>
   );
 }
